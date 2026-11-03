@@ -272,10 +272,13 @@
     </ul>
 
     <h3>B. Execution Guide</h3>
-    <pre><code># 1. Start Ollama local engine
+    <pre><code># 1. Start Ollama local server
+ollama serve
+
+# 2. In a separate terminal, verify model is ready
 ollama run gemma3:4b
 
-# 2. Start LogGuard AI Dashboard on Port 8080
+# 3. Start LogGuard AI Dashboard on Port 8080
 cd C:\TrainAi\agenticAI
 php artisan serve --port=8080
 

@@ -139,13 +139,27 @@ When `⚡ Auto-Triage (On New Errors)` is active and an error arrives:
 
 ### Step 1: Start Ollama AI Engine (Port 11434)
 
-In your terminal, verify the local model is ready:
+Start the Ollama server in your terminal:
 
 ```powershell
+# 1. Start the Ollama background server on port 11434
+ollama serve
+```
+
+In a separate terminal (or once the server is running), ensure the model is loaded:
+
+```powershell
+# 2. Pull and run the Gemma 3 (4B) model
 ollama run gemma3:4b
 ```
 
-_(You may type `/bye` to exit the chat; Ollama continues running in the background as a local Windows service on port 11434)._
+_(You may type `/bye` to exit the chat prompt; the `ollama serve` service will continue running in the background on `http://localhost:11434`)._
+
+To verify Ollama is online and listening:
+
+```powershell
+curl http://localhost:11434/api/tags
+```
 
 ---
 
