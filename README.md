@@ -11,43 +11,50 @@ LogGuard AI operates on a decoupled multi-port architecture designed to prevent 
 ```mermaid
 flowchart TD
     subgraph TargetApp ["1. Target System & Open Ports (Port 8000 / Services)"]
-        A[Inbound Web Request / API Call] --> B[Web Application Controller\n(Port 8000: e.g., Iconect)]
-        B --> C{Backend Services}
-        C -->|DB Timeouts / Deadlocks| DB[(MySQL: Port 3306)]
-        C -->|Queue Disconnects| REDIS[(Redis: Port 6379)]
-        C -->|502 Bad Gateway / 504 Timeout| NGINX[Nginx / Proxy: Port 80/443]
-        B & DB & REDIS & NGINX -->|Unhandled Exceptions| D[(storage/logs/laravel.log)]
+        A["Inbound Web Request / API Call"] --> B["Web Application Controller<br/>(Port 8000: e.g., Iconect)"]
+        B --> C{"Backend Services"}
+        C -->|"DB Timeouts / Deadlocks"| DB[("MySQL: Port 3306")]
+        C -->|"Queue Disconnects"| REDIS[("Redis: Port 6379")]
+        C -->|"502 Bad Gateway / 504 Timeout"| NGINX["Nginx / Proxy: Port 80/443"]
+        B -->|"Unhandled Exceptions"| D[("storage/logs/laravel.log")]
+        DB -->|"Unhandled Exceptions"| D
+        REDIS -->|"Unhandled Exceptions"| D
+        NGINX -->|"Unhandled Exceptions"| D
     end
 
     subgraph PythonBridge ["2. Python Automation Bridge & Ecosystem Hub (Port 5000)"]
-        E[app.py Micro-Server] -->|Socket Probe| F[Port Health Checker\nGET /api/ports/check]
-        F -.->|Probes :8000, :8080, :5000, :11434| PORTSTATUS[Live Port Status Board]
-        E -->|Secure Read Buffer| G[POST /api/read-file]
-        E -->|Gemma 3 Gateway| H[POST /api/triage]
+        E["app.py Micro-Server"] -->|"Socket Probe"| F["Port Health Checker<br/>GET /api/ports/check"]
+        F -.->|"Probes :8000, :8080, :5000, :11434"| PORTSTATUS["Live Port Status Board"]
+        E -->|"Secure Read Buffer"| G["POST /api/read-file"]
+        E -->|"Gemma 3 Gateway"| H["POST /api/triage"]
         G --> D
     end
 
     subgraph LogGuardUI ["3. LogGuard AI Administrative Dashboard (Port 8080)"]
-        I[Laravel 13 + React 19 Frontend] -->|Continuous 5s Tail Watcher| J[useRef Diff Tracker]
-        J -->|Detects New Error Lines| K[Filtered Monospace Terminal]
-        K -->|Incident Isolator: slice -1| L[Latest Active Error Payload]
-        L -->|Auto-Triage Active| M[⚡ Auto-Triage Live Pulsing Badge\n[ ⟳ Triaging... (Xs) ]]
+        I["Laravel 13 + React 19 Frontend"] -->|"Continuous 5s Tail Watcher"| J["useRef Diff Tracker"]
+        J -->|"Detects New Error Lines"| K["Filtered Monospace Terminal"]
+        K -->|"Incident Isolator: slice -1"| L["Latest Active Error Payload"]
+        L -->|"Auto-Triage Active"| M["⚡ Auto-Triage Live Pulsing Badge<br/>(Triaging... Active)"]
     end
 
     subgraph LocalAI ["4. Local Inference Engine (Port 11434)"]
-        M -->|Filtered Error Context| N[Ollama REST API\nhttp://localhost:11434/api/generate]
-        H -->|Direct Test Bridge| N
-        N --> O["Gemma 3 (4B)\nLocal Weight Model (100% Offline)"]
-        O -->|Strict JSON Schema| P[Incident Triage Assessment]
+        M -->|"Filtered Error Context"| N["Ollama REST API<br/>http://localhost:11434/api/generate"]
+        H -->|"Direct Test Bridge"| N
+        N --> O["Gemma 3 (4B)<br/>Local Weight Model (100% Offline)"]
+        O -->|"Strict JSON Schema"| P["Incident Triage Assessment"]
     end
 
     subgraph TriageReport ["5. Triage Report & Audit Trail"]
-        P --> Q[Root Cause Diagnosis]
-        P --> R[Affected Components & Services]
-        P --> S[Severity Classification: CRITICAL / HIGH / MED / LOW]
-        P --> T[Numbered Remediation Steps]
-        P --> U[Copyable Diagnostic CLI Commands]
-        Q & R & S & T & U --> V[Tool Audit Trail / execution.log]
+        P --> Q["Root Cause Diagnosis"]
+        P --> R["Affected Components & Services"]
+        P --> S["Severity Classification: CRITICAL / HIGH / MED / LOW"]
+        P --> T["Numbered Remediation Steps"]
+        P --> U["Copyable Diagnostic CLI Commands"]
+        Q --> V["Tool Audit Trail / execution.log"]
+        R --> V
+        S --> V
+        T --> V
+        U --> V
     end
 
     classDef target fill:#151F32,stroke:#334155,color:#F8FAFC
